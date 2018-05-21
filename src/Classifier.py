@@ -1,3 +1,6 @@
+from numpy.ma import mean
+from sklearn.model_selection import cross_val_score
+
 from src.utils.DataSet import DataSet
 
 
@@ -12,3 +15,8 @@ def solve(classifier):
         counter += 1 if r1 == r2 else 0
 
     return counter / len(verification_result) * 100
+
+
+def solve_cross(classifier):
+    scores = cross_val_score(classifier, DataSet().data_set, DataSet().results, cv=10)
+    return mean(scores) * 100

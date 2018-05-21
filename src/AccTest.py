@@ -2,7 +2,7 @@ from sklearn.naive_bayes import GaussianNB, BernoulliNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
-from src.Classifier import solve
+from src.Classifier import solve, solve_cross
 from src.utils.DataSet import DataSet
 from src.utils.FileWriter import FileWriter
 
@@ -32,17 +32,19 @@ def write_header(file_name):
     FileWriter().nl()
 
 
-def run_test(file_name):
+def run_test(file_name, method='fit'):
     DataSet().load_data(file_name)
     write_header(file_name)
 
     for _ in range(1):
         DataSet().randomize_set()
-
-        [FileWriter().append(solve(MLPClassifier(solver='lbfgs', activation=activation, hidden_layer_sizes=layer)))
-            for layer in layers for activation in activations]
-        [FileWriter().append(solve(bayes)) for _, bayes in bayeses.items()]
-        [FileWriter().append(solve(KNeighborsClassifier(neighbour))) for neighbour in neighbours]
-
+        test(solve) if method == 'fit' else test(solve_cross)
         FileWriter().nl()
     FileWriter().nl()
+
+
+def test(test_method):
+    [FileWriter().append(test_method(MLPClassifier(solver='lbfgs', activation=activation, hidden_layer_sizes=layer)))
+     for layer in layers for activation in activations]
+    [FileWriter().append(test_method(bayes)) for _, bayes in bayeses.items()]
+    [FileWriter().append(test_method(KNeighborsClassifier(neighbour))) for neighbour in neighbours]
